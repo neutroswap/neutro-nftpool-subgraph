@@ -1,0 +1,103 @@
+specVersion: 0.0.5
+description: Neutroswap is a decentralized protocol for automated token exchange on EOS.
+repository: https://github.com/neutroswap/v2-subgraph
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: NftPoolFactory
+    network: eosevm-mainnet
+    source:
+      address: '0x70890787A1cd8da4F5952B014836ac211e97A7a0'
+      abi: NftPoolFactory
+      startBlock: 25615034
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/mappings/NftPoolFactory.ts
+      entities:
+        - NftPoolFactory
+        - NftPool
+      abis:
+        - name: NftPoolFactory
+          file: ./abis/NftPoolFactory.json
+      eventHandlers:
+        - event: PoolCreated(indexed address,address)
+          handler: handleCreateNftPool
+  - kind: ethereum/contract
+    name: NitroPoolFactory
+    network: eosevm-mainnet
+    source:
+      address: '0xF69B9d1993B89E13aC87E07f6C1Ee2F07e151ae8'
+      abi: NitroPoolFactory
+      startBlock: 25617219
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/mappings/NitroPoolFactory.ts
+      entities:
+        - NitroPoolFactory
+        - NitroPool
+      abis:
+        - name: NitroPoolFactory
+          file: ./abis/NitroPoolFactory.json
+      eventHandlers:
+        - event: CreateNitroPool(address,address,(uint256,uint256,uint256,uint256,uint256,uint256,uint256,bool,string),address,address)
+          handler: handleCreateNitroPool
+templates:
+  - name: NftPool
+    kind: ethereum/contract
+    network: eosevm-mainnet
+    source:
+      abi: NftPool
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/mappings/NftPool.ts
+      entities:
+        - NftPoolFactory
+        - NftPool
+      abis:
+        - name: NftPool
+          file: ./abis/NftPool.json
+      eventHandlers:
+        - event: AddToPosition(indexed uint256,address,uint256)
+          handler: handleAddToPosition
+        - event: CreatePosition(indexed uint256,uint256,uint256)
+          handler: handleCreatePosition
+        - event: WithdrawFromPosition(indexed uint256,uint256)
+          handler: handleWithdrawFromPosition
+        - event: LockPosition(indexed uint256,uint256)
+          handler: handleLockPosition
+        - event: SplitPosition(indexed uint256,uint256,uint256)
+          handler: handleSplitPosition
+        - event: MergePositions(indexed address,uint256[],uint256)
+          handler: handleMergePosition
+        - event: SetBoost(indexed uint256,uint256)
+          handler: handleSetBoost
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
+  - name: NitroPool
+    kind: ethereum/contract
+    network: eosevm-mainnet
+    source:
+      abi: NitroPool
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/mappings/NitroPool.ts
+      entities:
+        - NitroPoolFactory
+        - NitroPool
+      abis:
+        - name: NitroPool
+          file: ./abis/NitroPool.json
+      eventHandlers:
+        - event: Deposit(indexed address,address,uint256,uint256)
+          handler: handleDeposit
+        - event: Withdraw(indexed address,address,uint256,uint256)
+          handler: handleWithdraw

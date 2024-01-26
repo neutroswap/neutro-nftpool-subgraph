@@ -1,0 +1,61 @@
+type NftPoolFactory @entity(immutable: true) {
+  id: Bytes!
+  nftPool: [NftPool!]! @derivedFrom(field: "nftPoolFactory")
+}
+
+type NftPool @entity(immutable: false) {
+  id: Bytes!
+  nftPoolFactory: NftPoolFactory!
+  nitroPool: [NitroPool!] @derivedFrom(field: "nftPool")
+  lpToken: Bytes!
+  nftPoolToken: [NftPoolToken!] @derivedFrom(field: "nftPool")
+}
+
+type NftPoolToken @entity(immutable: false) {
+  id: ID! 
+  nftPool: NftPool!
+  user: UserInNFtPool!
+  tokenId: BigInt!
+  amountLpToken: BigInt!
+  startLockTime: BigInt!
+  lockDuration: BigInt!
+  endLockTime: BigInt!
+  status: Boolean!
+  boostPoints: BigInt!
+  stakedInNitroPool: Bytes!
+}
+
+type UserInNFtPool @entity(immutable: true) {
+  id: Bytes!
+  nftPoolToken: [NftPoolToken!] @derivedFrom(field: "user")
+}
+
+type NitroPoolFactory @entity(immutable: true) {
+  id: Bytes!
+  nitroPool: [NitroPool!]! @derivedFrom(field: "nitroPoolFactory")
+}
+
+type NitroPool @entity(immutable: false) {
+  id: Bytes!
+  nitroPoolFactory: NitroPoolFactory!
+  nftPool: NftPool
+  rewardsToken1: Bytes!
+  rewardsToken2: Bytes!
+  totalLpToken: BigInt!
+  requirements: NitroPoolRequirement! @derivedFrom(field: "nitroPool")
+}
+
+type NitroPoolRequirement @entity(immutable: true) {
+  id: ID!
+  nitroPool: NitroPool!
+  startTime: BigInt!
+  endTime: BigInt!
+  harvestStartTime: BigInt!
+  depositEndTime: BigInt!
+  lockDurationReq: BigInt!
+  lockEndReq: BigInt!
+  depositAmountReq: BigInt!
+  whitelist: Boolean!
+  description: String!
+}
+
